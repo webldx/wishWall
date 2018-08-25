@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>许愿墙</title>
+    <!--
+		我们以前在做静态页面的时候 是在自己的电脑上写代码 并且在自己的电脑上访问这个页面 这个时候文件的物理路径和电脑的盘符路径正好是相同的 所以相对路径是相对于当前文件
+
+		但是现在我们的页面在服务器端(不在你自己的电脑上 是在网络中的某一台电脑上)
+		文件 我们是通过网路去访问这个文件 那么这里的相对路径是相对于 浏览器地址栏中的请求路径
+
+		一般我们在模板中写路径的时候都是写绝对路径
+
+		/ 代表绝对路径 指的是网站项目的根目录
+	-->
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="/js/jquery-1.7.2.min.js"></script>
+    <script src="/js/index.js"></script>
+</head>
+
+<body>
+    <!--
+		目前数据都是固定的 我们需要为当前案例创建数据库 创建表 添加数据 
+		通过模板连接数据库 查询数据 将查询的结果通过模板引擎进行拼接 让拼接的结果返回给客户端
+	-->
+    <div id="top">
+        <span id="send"></span>
+    </div>
+    <div id="main">
+        {{#each rows}}
+        <dl class="paper a1">
+            <dt>
+					<span class="username">{{name}}</span>
+					<span class="num">No.00001</span>
+				</dt>
+            <dd class="content">
+                {{content}}
+            </dd>
+            <dd class="bottom">
+                <span class="time">{{formatTime data}}</span>
+                <a href="" class="close"></a>
+            </dd>
+        </dl>
+        {{/each}}
+    </div>
+
+    <div id="send-form">
+        <p class="title">
+            <span>&nbsp;</span>
+            <a href="" id="close"></a>
+        </p>
+        <form action="" name="wish">
+            <p>
+                <label for="username">昵称：</label>
+                <input type="text" name="username" id="username" />
+            </p>
+            <p>
+                <label for="content">愿望：(您还可以输入&nbsp;<span id="font-num">50</span>&nbsp;个字)</label>
+                <textarea name="content" id="content"></textarea>
+            </p>
+            <div id="phiz">
+                <img src="/images/phiz/zhuakuang.gif" alt="抓狂" />
+                <img src="/images/phiz/baobao.gif" alt="抱抱" />
+                <img src="/images/phiz/haixiu.gif" alt="害羞" />
+                <img src="/images/phiz/ku.gif" alt="酷" />
+                <img src="/images/phiz/xixi.gif" alt="嘻嘻" />
+                <img src="/images/phiz/taikaixin.gif" alt="太开心" />
+                <img src="/images/phiz/touxiao.gif" alt="偷笑" />
+                <img src="/images/phiz/qian.gif" alt="钱" />
+                <img src="/images/phiz/huaxin.gif" alt="花心" />
+                <img src="/images/phiz/jiyan.gif" alt="挤眼" />
+            </div>
+            <span id="send-btn"></span>
+        </form>
+    </div>
+
+    <!--
+
+		看文件中的代码到底是前端的代码还是后端的代码 需要弄明白代码是在哪一端 执行的
+
+		由于上面的代码是在服务器端执行的 所以上面的代码是服务器端代码
+
+		有于下面的JS代码是在客户端执行 所以它是前端代码
+		
+	-->
+
+    <script type="text/javascript">
+        $('#send-btn').on('click', function() {
+            // 用户昵称
+            var username = $('#username').val();
+            // 用户愿望
+            var content = $('#content').val();
+
+            // 发送添加愿望请求
+            $.ajax({
+                type: 'post',
+                url: '/add',
+                data: {
+                    username: username,
+                    content: content
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            })
+
+        });
+    </script>
+</body>
+
+</html>
